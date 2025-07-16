@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WebGL Liquid Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    #webgl-liquid-wrapper {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+    }
+    #webgl-liquid-container canvas {
+      display: block;
+      width: 100% !important;
+      height: auto !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="webgl-liquid-wrapper">
+    <div id="webgl-liquid-container"></div>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'https://cdn.skypack.dev/three@0.150.1';
+
+    const container = document.getElementById('webgl-liquid-container');
+    const wrapper   = document.getElementById('webgl-liquid-wrapper');
+    const scene     = new THREE.Scene();
+    const camera    = new THREE.OrthographicCamera(-1,1,1,-1,0.1,10);
+    camera.position.z = 1;
+    const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+
+    const clock       = new THREE.Clock();
+    const mouse       = new THREE.Vector2(0.5,0.5);
+    const smoothMouse = new THREE.Vector2(0.5,0.5);
+    let hoverTarget = 0, currentHover = 0;
+    let zoomTarget  = 1, currentZoom  = 1;
+
+    const imageURL = 'https://santisarapinas.com/wp-content/uploads/2025/03/Santi-Sarapinas-Creative-Director-Webgl2.png';
+    new THREE.TextureLoader().load(imageURL, texture => {
+      texture.minFilter = THREE.LinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      const aspect = texture.image.width / texture.image.height;
+
+      const uniforms = {
+        uTexture: { value: texture },
+        uMouse:   { value: smoothMouse },
+        uHover:   { value: currentHover },
+        uZoom:    { value: currentZoom },
+        uTime:    { value: 0 }
+      };
+
+      const material = new THREE.ShaderMaterial({
+        uniforms,
+        transparent: true,
+        vertexShader: `
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = vec4(position,1.0);
+          }`,
+        fragmentShader: `
+          uniform sampler2D uTexture;
+          uniform vec2 uMouse;
+          uniform float uHover, uZoom, uTime;
+          varying vec2 vUv;
+          void main() {
+            vec2 uv = (vUv - 0.5)/uZoom + 0.5;
+            float waveX = sin((uv.y + uTime*0.1)*10.0)*0.003;
+            float waveY = cos((uv.x + uTime*0.1)*10.0)*0.003;
+            uv += vec2(waveX, waveY);
+            float dist = distance(uv,uMouse), radius = 0.4, ripple=0.0;
+            if(dist < radius){
+              float strength = (radius-dist)/radius;
+              ripple = sin(20.0*dist - uTime*4.0)*0.01*strength;
+            }
+            vec2 dir = normalize(uv - uMouse);
+            vec2 finalUv = uv + dir*ripple*uHover;
+            gl_FragColor = texture2D(uTexture, finalUv);
+          }`
+      });
+
+      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2,2), material);
+      scene.add(mesh);
+
+      function resize() {
+        const w = wrapper.clientWidth, h = w / aspect;
+        renderer.setSize(w, h, false);
+        renderer.domElement.style.width  = w+'px';
+        renderer.domElement.style.height = h+'px';
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      function onMove(ev, isTouch=false) {
+        const e = isTouch ? ev.touches[0] : ev;
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = (e.clientX - rect.left)/rect.width;
+        mouse.y = 1 - (e.clientY - rect.top)/rect.height;
+        hoverTarget = 1; zoomTarget = 0.95;
+      }
+      container.addEventListener('mousemove', onMove);
+      container.addEventListener('touchmove', e=>onMove(e,true));
+      ;['mouseleave','touchend'].forEach(evt=>{
+        container.addEventListener(evt, ()=>{ hoverTarget=0; zoomTarget=1; });
+      });
+
+      (function animate(){
+        requestAnimationFrame(animate);
+        const dt = clock.getDelta();
+        uniforms.uTime.value += dt;
+        smoothMouse.lerp(mouse, 0.15);
+        currentHover += (hoverTarget-currentHover)*0.1;
+        currentZoom  += (zoomTarget-currentZoom)*0.1;
+        uniforms.uMouse.value  = smoothMouse;
+        uniforms.uHover.value  = currentHover;
+        uniforms.uZoom.value   = currentZoom;
+        renderer.render(scene, camera);
+      })();
+    });
+  </script>
+</body>
+</html>
