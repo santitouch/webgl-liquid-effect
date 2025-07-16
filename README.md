@@ -12,8 +12,8 @@ Folder Structure
 
 webgl-liquid-demo/
 ├── index.html            # Main demo file
-└── assets/               # Place your custom images here
-    └── your-image.jpg
+└── readme.md             # Readme file
+└── your-image.jpg  # Place your custom image here or insert the link to your image
 
 Getting Started
 
@@ -24,7 +24,7 @@ cd webgl-liquid-demo
 
 Add your image
 
-Copy your image file into the assets/ folder (e.g., assets/your-image.jpg).
+Upload your image or add a link to your image (e.g., your-image.jpg).
 
 Update the URL
 
@@ -33,7 +33,7 @@ Open index.html in your editor.
 Locate the comment:
 
 // REPLACE THIS URL with your own image URL
-const imageURL = 'https://<your-username>.github.io/webgl-liquid-demo/assets/your-image.jpg';
+const imageURL = 'https://<your-username>.github.io/webgl-liquid-demo/your-image.jpg';
 
 Replace the URL inside the quotes with the path to your image in assets/.
 
