@@ -6,7 +6,7 @@ Live Demo
 
 After deployment, your demo will be available at:
 
-https://<your-username>.github.io/webgl-liquid-demo/
+https://<your-username>.github.io/webgl-liquid-effect/
 
 Folder Structure
 
@@ -19,12 +19,12 @@ Getting Started
 
 Clone the repo
 
-git clone git@github.com:<your-username>/webgl-liquid-demo.git
+git clone git@github.com:<your-username>/webgl-liquid-effect.git
 cd webgl-liquid-demo
 
 Add your image
 
-Upload your image or add a link to your image (e.g., your-image.jpg).
+Upload your image (e.g., your-image.jpg).
 
 Update the URL
 
@@ -33,9 +33,9 @@ Open index.html in your editor.
 Locate the comment:
 
 // REPLACE THIS URL with your own image URL
-const imageURL = 'https://<your-username>.github.io/webgl-liquid-demo/your-image.jpg';
+const imageURL = 'https://<your-username>.github.io/webgl-liquid-effect/your-image.jpg';
 
-Replace the URL inside the quotes with the path to your image in assets/.
+Replace the URL inside the quotes with the path to your image.
 
 Preview locally
 
@@ -61,7 +61,7 @@ Embedding in No-Code Platforms
 Use this simple <iframe> snippet in your platform’s embed or custom code widget:
 
 <iframe
-  src="https://<your-username>.github.io/webgl-liquid-demo/"
+  src="https://<your-username>.github.io/webgl-liquid-effect/"
   width="100%"
   height="600"
   style="border:none;"
