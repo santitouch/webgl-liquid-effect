@@ -19,9 +19,6 @@ Getting Started
 
 Clone the repo
 
-git clone git@github.com:<your-username>/webgl-liquid-effect.git
-cd webgl-liquid-demo
-
 Add your image
 
 Upload your image (e.g., your-image.jpg).
